@@ -6,7 +6,7 @@ API_URL = 'https://api.coinmarketcap.com/v1/ticker/'
 # Establish connection with the database
 def get_db_connection(uri):
     client = pymongo.MongoClient(uri)
-    return client
+    return client.cryptongo
 
 # Get data from the CoinMarketCap API
 def get_cryptocurrencies_from_api():
@@ -70,3 +70,12 @@ def save_ticker(db_connection, ticker_data = None):
     # Insert a document into the MongoDB collection
     db_connection.tickers.insert_one(ticker_data)
     return True
+
+if __name__ == '__main__':
+	connection = get_db_connection('mongodb://localhost:27017/') 
+	tickers = get_cryptocurrencies_from_api()
+
+	for ticker in tickers: 
+		save_ticker(connection, ticker) 
+
+	print('Tickers almacenados')
