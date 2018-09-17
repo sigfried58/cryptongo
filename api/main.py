@@ -10,24 +10,23 @@ db_connection = get_db_connection('mongodb://localhost:27017')
 
 def get_documents():
     params ={}
-    name = int(request.args.get('name',''))
+    name = request.args.get('name','')
     limit = int(request.args.get('limit', 0))
     if name:
-      params.update({'name':name})
+        params.update({'name':name})
     cursor=db_connection.tickers.find(
-      params,{'_id':0,'ticker_hash':0}).limit(limit)
+        params,{'_id':0,'ticker_hash':0}).limit(limit)
     return list(cursor)
 
 def get_top20():
     params = {}
-    name = int(request.args.get('name', ''))
+    name = request.args.get('name', '')
     limit = int(request.args.get('limit', 0))
     if name:
-      params.update({'name':name})
+        params.update({'name':name})
     params.update({'rank': {'$lte': 20}})
     cursor = db_connection.tickers.find(
-      params, {'_id': 0, 'ticker_hash': 0}
-    ).limit(limit)
+        params, {'_id': 0, 'ticker_hash': 0}).limit(limit)
     return list(cursor)
 
 def remove_currency():
@@ -38,5 +37,17 @@ def remove_currency():
     else:
         return False
     return db_connection.tickers.delete_many(
-            params
+    params
     ).deleted_count
+
+@app.route("/")
+def index():
+	  return jsonify( 
+      {
+        'name': 'Cryptongo API'
+      }
+	  )
+
+@app.route("/top20", methods=['GET'])
+def top20():
+	  return jsonify(get_top20())
