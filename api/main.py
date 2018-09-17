@@ -51,3 +51,18 @@ def index():
 @app.route("/top20", methods=['GET'])
 def top20():
 	  return jsonify(get_top20())
+
+@app.route("/tickers", methods=['GET', 'DELETE'])
+def tickers():
+    if request.method == 'GET':
+        return jsonify(get_documents())
+    elif request.method == 'DELETE':
+        result = remove_currency()
+        if result >0:
+            return jsonify({
+                'text': 'Documentos eliminados'
+            }), 204
+        else:
+            return jsonify({
+                'error': 'No se encontraron los documetos'
+}), 404
